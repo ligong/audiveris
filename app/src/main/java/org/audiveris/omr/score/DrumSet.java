@@ -496,9 +496,12 @@ public class DrumSet
             this.midi = midi;
         }
 
+		// Return the midi value for musicxml output
+		// According to https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/midi-unpitched/
+		// The value under <midi-unpitched> is 1 based, so it is adjusted by 1
         public int getMidi ()
         {
-            return midi;
+            return midi + 1;
         }
     }
 
