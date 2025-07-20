@@ -252,6 +252,7 @@ public class ChordNameInter
     /**
      * No-argument constructor meant for JAXB.
      */
+    @SuppressWarnings("unused")
     private ChordNameInter ()
     {
         this.root = null;
@@ -614,7 +615,7 @@ public class ChordNameInter
                         getGroup(matcher, BASS_STEP),
                         getGroup(matcher, BASS_ALTER));
 
-                if ((firstDeg != null) && (kind.type != SUSPENDED_FOURTH)
+                if ((firstDeg != null) && (kind != null) && (kind.type != SUSPENDED_FOURTH)
                         && (kind.type != SUSPENDED_SECOND)) {
                     // Remove first degree
                     degrees.remove(firstDeg);

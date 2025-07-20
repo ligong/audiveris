@@ -63,7 +63,6 @@ import org.audiveris.omr.ui.symbol.ShapeSymbol;
 import org.audiveris.omr.ui.symbol.TextFamily;
 import org.audiveris.omr.ui.symbol.TextFont;
 import org.audiveris.omr.util.Entities;
-import org.audiveris.omr.util.HorizontalSide;
 import static org.audiveris.omr.util.RegexUtil.getGroup;
 import static org.audiveris.omr.util.RegexUtil.group;
 import static org.audiveris.omr.util.StringUtil.codesOf;
@@ -297,7 +296,7 @@ public class MetronomeInter
             final String val = word.getValue();
 
             if (word instanceof BeatUnitInter beatUnit) {
-                m.unitFontSize = beatUnit.getFontInfo().pointsize;
+                m.unitFontSize = beatUnit.getFontInfo().pointSize;
 
                 final SheetStub stub = staff.getSystem().getSheet().getStub();
                 final MusicFamily musicFamily = stub.getMusicFamily();
@@ -316,11 +315,11 @@ public class MetronomeInter
             } else {
                 if (!afterBeat) {
                     if (m.tempoFontSize == null) {
-                        m.tempoFontSize = word.getFontInfo().pointsize;
+                        m.tempoFontSize = word.getFontInfo().pointSize;
                     }
                 } else {
                     if (m.bpmFontSize == null) {
-                        m.bpmFontSize = word.getFontInfo().pointsize;
+                        m.bpmFontSize = word.getFontInfo().pointSize;
                     }
                 }
             }
@@ -799,16 +798,18 @@ public class MetronomeInter
             staff = system.getStaffAtOrBelow(center);
         }
 
-        final Point ref = new Point(staff.getAbscissa(HorizontalSide.LEFT), center.y);
-
-        // We target the first chord in the first stack(s) of the containing system,
+        // We target the first chord in the underlying stack of the containing system,
         // regardless of the metronome precise abscissa
-        for (MeasureStack stack : system.getStacks()) {
-            final AbstractChordInter chord = stack.getStandardChordBelow(ref, null);
+        MeasureStack stack = system.getStackAt(center);
 
-            if (chord != null) {
-                return Collections.singleton(new Link(chord, new ChordSentenceRelation(), false));
-            }
+        if (stack == null) {
+            stack = system.getStacks().getFirst();
+        }
+
+        final AbstractChordInter chord = stack.getStandardChordBelow(center, null);
+
+        if (chord != null) {
+            return Collections.singleton(new Link(chord, new ChordSentenceRelation(), false));
         }
 
         return Collections.emptySet();
@@ -855,7 +856,7 @@ public class MetronomeInter
             }
         }
 
-        final int mfs = meanFont.pointsize;
+        final int mfs = meanFont.pointSize;
         if (model != null) {
             newModel.tempoFontSize = (model.tempoFontSize != null) ? model.tempoFontSize : mfs;
             newModel.unitFontSize = (model.unitFontSize != null) ? model.unitFontSize : mfs;

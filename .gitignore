@@ -22,6 +22,8 @@ nbproject
 *.log
 *.mf
 *.orig
+*/nb-cache/*
+*.ser
 build/*
 app/bin/*
 dist/*
@@ -42,6 +44,11 @@ data/train/*.zip
 data/train/*.csv
 data/www/docs/api
 data/www/docs/guides
+docs/build
+docs/build/*
+packaging/build
+packaging/build/*
+packaging/.gradle/*
 private/*
 schemas/bin/
 schemas/build
@@ -79,6 +86,9 @@ Thumb.db
 
 # IDEA added files
 .idea
+
+# Visual Studio added files
+.vscode
 
 # Gradle added files (temporary fix)
 gradle.properties

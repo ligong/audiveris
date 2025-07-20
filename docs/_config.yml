@@ -42,7 +42,7 @@ permalink: /:title/
 #theme: minima
 #theme: just-the-docs
 #remote_theme: pmarsceill/just-the-docs
-remote_theme: just-the-docs/just-the-docs@v0.10.0
+remote_theme: just-the-docs/just-the-docs@v0.10.1
 
 
 plugins:
@@ -118,7 +118,9 @@ callouts:
 # Excluded items can be processed by explicitly listing the directories or
 # their entries' file path in the `include:` list.
 #
-# exclude:
+exclude:
+  - build
+  - pdf
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
@@ -133,11 +135,11 @@ callouts:
 # Following are Audiveris variables
 # ---------------------------------
 
-# Latest Audiveris version
-audiveris_version: 5.4
+# Latest Audiveris functional version
+audiveris_functional_version: 5.6
 
-# Needed Java version
-java_version: 21
+# Needed Java version for master
+master_java_version: 21
 
 # File menu paths
 file_input:           <a href="/audiveris/_pages/reference/menus/file/#input"><code>File → Input</code></a>

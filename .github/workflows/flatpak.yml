@@ -1,4 +1,4 @@
-name: Build audiveris flatpak package
+name: Build flatpak package
 
 # execute this workflow on every push
 #on:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
         
@@ -26,36 +26,30 @@ jobs:
           file: gradle.properties
           all: true
 
-      - name: Setup Java ${{ steps.all.outputs.minJavaVersion }}
+      - name: Setup Java ${{ steps.all.outputs.theMinJavaVersion }}
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ steps.all.outputs.minJavaVersion }}
+          java-version: ${{ steps.all.outputs.theMinJavaVersion }}
           distribution: zulu
 
-      - name: Determine Java dependencies
-        run: >-
-          dev/flatpak/create-flatpak-dependencies.py
-
-      - name: force flatpak build from ${{ github.sha }}
-        run: >-
-          sed -i
-          -e 's,\(url: https://github.com\)/.*,\1/${{ github.repository }},'
-          -e 's,tag: .*,branch: ${{ github.ref_name }},'
-          -e 's,commit: .*,commit: ${{ github.sha }},'
-          dev/flathub/org.audiveris.audiveris.yml
-
-      - name: upload flathub archive
-        uses: actions/upload-artifact@v3
+      - name: Populate flatpak/flathub
+        uses: gradle/gradle-build-action@v2.7.0
         with:
-          name: flathub-data
-          path: dev/flathub/
+          arguments: --info initFlathub
+
+      - name: upload flathub content
+        uses: actions/upload-artifact@v4
+        with:
+          name: flathub-content
+          path: flatpak/flathub/
 
   flatpak:
     name: "Flatpak"
+    needs: java-dependencies
     runs-on: ubuntu-latest
 
     container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-44
+      image: bilelmoussaoui/flatpak-github-actions:gnome-47
       options: --privileged
 
     strategy:
@@ -64,10 +58,10 @@ jobs:
       fail-fast: false
 
     steps:
-      - name: download flathub archive
-        uses: actions/download-artifact@v3
+      - name: download flathub content
+        uses: actions/download-artifact@v4
         with:
-          name: flathub-data
+          name: flathub-content
 
       - name: Install docker
         if: ${{ matrix.arch != 'x86_64' }}
@@ -80,7 +74,8 @@ jobs:
         with:
           platforms: arm64
 
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      - name: Build flatpak ${{ github.sha }}
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           build-bundle: true
           bundle: org.audiveris.audiveris.flatpak
